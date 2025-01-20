@@ -1,4 +1,5 @@
 
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -17,6 +18,59 @@ DEBUG = bool(os.environ.get('DEBUG', default=0))
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(' ')
 
+AUTH_USER_MODEL = 'useraccount.User'
+
+WEBSITE_URL = 'http://localhost:8000'
+WEBSITE_NAME = 'PWRoom'
+ 
+
+# Setting up the simple jwt token 
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': True,
+    'SIGNING_KEY': 'complexkey',
+    'ALGORITHM': 'HS512',
+}
+
+# Setting up the django-allauth settings
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False  
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = None
+
+# Setting up the rest_framework settings
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': {
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    },
+    'DEFAULT_PERMISSION_CLASSES': {
+        'rest_framework.permissions.IsAuthenticated',
+    },
+}
+
+# Setting up the CORS settings
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
+
+REST_AUTH = {
+    "USE_JWT": True,
+    "JWT_AUTH_HTTP_ONLY": False,
+}
+
+
+ 
+SIDE_ID = 1
+
 
 # Application definition
 
@@ -27,11 +81,30 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Third party apps
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    
+    'corsheaders',
+    
+    'allauth',
+    'allauth.account',
+    
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+        
+    
+    # Custom apps
+    'useraccount',
+    'property',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -110,8 +183,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
