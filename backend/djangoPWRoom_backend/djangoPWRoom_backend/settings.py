@@ -62,6 +62,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
 ]
 
+CORST_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTP_ONLY": False,
